@@ -23,4 +23,8 @@ class App < Sinatra::Base
     File.write('data.json', JSON.pretty_generate(file))
     movie.to_json
   end
+
+  set :public_folder, 'public'
 end
+
+
