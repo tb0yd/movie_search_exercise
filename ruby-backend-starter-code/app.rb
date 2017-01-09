@@ -2,6 +2,13 @@ require 'sinatra'
 require 'json'
 
 class App < Sinatra::Base
+  before do
+    if request.content_type == 'application/json'
+      request.body.rewind
+      @payload = JSON.parse request.body.read
+    end
+  end
+
   get '/' do
     File.read('views/index.html')
   end
@@ -12,6 +19,7 @@ class App < Sinatra::Base
   end
 
   put '/favorites/?' do
+    params = @payload
     unless params['name'] && params['oid']
       return 'Invalid Request'
     end
@@ -24,7 +32,16 @@ class App < Sinatra::Base
     movie.to_json
   end
 
-  set :public_folder, 'public'
+  delete '/favorites/?' do
+    params = @payload
+    unless params['name'] && params['oid']
+      return 'Invalid Request'
+    end
+
+    response.header['Content-Type'] = 'application/json'
+    file = JSON.parse(File.read('data.json'))
+    file = file.select { |item| item['oid'] != params['oid'] }
+    File.write('data.json', JSON.pretty_generate(file))
+    file.to_json
+  end
 end
-
-

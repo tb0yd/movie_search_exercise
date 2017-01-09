@@ -154,12 +154,26 @@ nav a:hover {
    Author's custom styles
    ========================================================================== */
 
+a.favorite, a.favorite:focus, a.favorite:hover {
+    color: black;
+    text-decoration: none;
+}
+
+a.favorite.active {
+    color: red;
+    text-decoration: none;
+}
+
+a.favoritesLink {
+    margin-bottom: 8px;
+}
+
 section > ul {
     list-style: none;
     margin: 0;
 }
 
-#listView, #detailsView {
+#listView, #detailsView, #favoritesView {
     display: none;
 }
 
@@ -172,8 +186,8 @@ section > ul {
     width: 100%;
 }
 
-#listBody, #detailsBody {
-    margin-top: 100px;
+#listBody, #detailsBody, #favoritesView {
+    margin-top: 110px;
 }
 
 

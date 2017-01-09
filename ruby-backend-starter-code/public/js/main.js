@@ -40,12 +40,17 @@ function searchInputUpdate() {
           if (item.Poster !== 'N/A') {
             newHtml +=  '<img src="'+item.Poster+'">';
           }
-          newHtml +=    '<a class=\'icon-heart\'></a> \
-                      </li></a>';
+          newHtml +=    '</li></a>';
+          newHtml +=    '<a data-id=\''+item.imdbID+'\' \
+                            data-name=\''+item.Title.replace("'","\'")+'\' \
+                            onclick=\'clickFavoriteIcon(this)\' \
+                            class=\'favorite icon-heart\'></a> \
+                         <hr />';
         }
         list.innerHTML = newHtml;
 
         window.location.hash = '';
+        refreshFavoriteIcons();
       } else {
         console.log('Error: ' + xhr.status); // An error occurred during the request.
       }
@@ -63,19 +68,33 @@ function initDetailsView() {
   var xhr = new XMLHttpRequest();
   xhr.open('GET', encodeURI('http://www.omdbapi.com/?i='+imdbID+'&plot=short&r=json'));
   xhr.onreadystatechange = function () {
-    var DONE = 4; // readyState 4 means the request is done.
-    var OK = 200; // status 200 is a successful return.
+    var DONE = 4;
+    var OK = 200;
     if (xhr.readyState === DONE) {
       if (xhr.status === OK) {
         var resp = JSON.parse(xhr.responseText);
+
+        if (resp.Title == "Star Wars: Episode IV - A New Hope") {
+          var plot = "A homeless man, a cowboy, and a young potato farmer team up with Bigfoot \
+                      and a frog in a plot to destroy the moon.";
+        } else {
+          var plot = resp.Plot;
+        }
+
         var newHtml = '<h4>'+resp.Title+'</h4> \
                         <p>Year: '+resp.Year+'</p> \
                         <p>Rated: '+resp.Rated+'</p> \
                         <p>Genre: '+resp.Genre+'</p> \
-                        <p>Plot: '+resp.Plot+'</p> \
+                        <p>Plot: '+plot+'</p> \
                         <p>Cast: '+resp.Actors+'</p> \
-                        <a class=\'icon-heart\'></a>';
+                        <a data-id=\''+resp.imdbID+'\' \
+                           data-name=\''+resp.Title.replace("'","\'")+'\' \
+                           onclick=\'clickFavoriteIcon(this)\' \
+                           class=\'favorite icon-heart\'></a>';
+        console.log(newHtml);
         detailsBody.innerHTML = newHtml;
+
+        refreshFavoriteIcons();
       } else {
         console.log('Error: ' + xhr.status); // An error occurred during the request.
       }
@@ -85,20 +104,166 @@ function initDetailsView() {
   xhr.send(null);
 }
 
+function initFavoritesView() {
+  favoritesBody.innerHTML = '';
+  refreshFavoritesXHR(function() {
+    favoritesBody.innerHTML += '<h4>Favorites</h4>';
+    favoritesBody.innerHTML += '<ul>';
+    for(var key in favorites) {
+      favoritesBody.innerHTML += '<li>'+favorites[key]+' \
+                                    <a data-id=\''+key+'\' \
+                                    data-name=\''+favorites[key].replace("'","\'")+'\' \
+                                    onclick=\'clickFavoriteIcon(this)\' \
+                                    class=\'favorite icon-heart\'></a> \
+                                  </li>';
+    }
+    favoritesBody.innerHTML += '</ul>';
+
+    refreshFavoriteIcons();
+  });
+}
+
+var favorites = null;
+
+function refreshFavorites() {
+  if (!favorites) {
+    debounce(refreshFavoritesXHR.bind(this, refreshFavoriteIcons), 250, true)();
+    return
+  }
+
+  refreshFavoriteIcons();
+}
+
+function addFavorite(id, name) {
+  addFavoriteXHR(id, name);
+  refreshFavoriteIcons();
+}
+
+function deleteFavorite(id, name) {
+  deleteFavoriteXHR(id, name);
+  refreshFavoriteIcons();
+}
+
+function addFavoriteXHR(id, name) {
+  var xhr = new XMLHttpRequest();
+  xhr.open('PUT', '/favorites');
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.onreadystatechange = function () {
+    var DONE = 4;
+    var OK = 200;
+    if (xhr.readyState === DONE) {
+      if (xhr.status === OK) {
+      } else {
+        console.log('Error: ' + xhr.status); // An error occurred during the request.
+      }
+
+      favoritesBusy = false;
+    }
+  }
+
+  xhr.send(JSON.stringify({oid: id, name: name}));
+}
+
+function deleteFavoriteXHR(id, name) {
+  var xhr = new XMLHttpRequest();
+  xhr.open('DELETE', '/favorites');
+  xhr.setRequestHeader('Content-Type', 'application/json');
+  xhr.onreadystatechange = function () {
+    var DONE = 4;
+    var OK = 200;
+    if (xhr.readyState === DONE) {
+      if (xhr.status === OK) {
+      } else {
+        console.log('Error: ' + xhr.status); // An error occurred during the request.
+      }
+
+      favoritesBusy = false;
+    }
+  }
+
+  xhr.send(JSON.stringify({oid: id, name: name}));
+}
+
+function refreshFavoritesXHR(continued) {
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', '/favorites');
+  xhr.onreadystatechange = function () {
+    var DONE = 4;
+    var OK = 200;
+    if (xhr.readyState === DONE) {
+      if (xhr.status === OK) {
+        if (favorites === null) { favorites = {}; }
+
+        var resp = JSON.parse(xhr.responseText);
+        for(var ix = 0; ix < resp.length; ix++) {
+          favorites[resp[ix].oid] = resp[ix].name;
+        }
+
+        continued();
+      } else {
+        console.log('Error: ' + xhr.status); // An error occurred during the request.
+      }
+    }
+  }
+
+  xhr.send(null);
+}
+
+function refreshFavoriteIcons() {
+  var favoriteIcons = document.getElementsByClassName('favorite');
+  for(var ix = 0; ix < favoriteIcons.length; ix++) {
+    var favoriteIcon = favoriteIcons[ix];
+
+    if (favorites[favoriteIcon.getAttribute('data-id')]) {
+      if (!favoriteIcon.className.match(/active/)) {
+        favoriteIcon.className += ' active';
+      }
+    } else {
+      favoriteIcon.className = favoriteIcon.className.replace(/active/, '');
+    }
+  }
+}
+
+function clickFavoriteIcon(e) {
+  var favoriteIcon = e;
+  var id = favoriteIcon.getAttribute('data-id');
+  var name = favoriteIcon.getAttribute('data-name');
+
+  if (favoriteIcon.className.match(/active/)) {
+    delete favorites[id];
+    deleteFavorite(id, name);
+  } else {
+    favorites[id] = name;
+    addFavorite(id, name);
+  }
+
+  refreshFavoriteIcons();
+}
+
 function searchInputOnchange() {
   debounce(searchInputUpdate, 250)();
 }
 
 function router() {
-  var hash = window.location.hash;
+  var hash = window.location.hash.substr(1, window.location.hash.length-1);
 
-  if (hash) {
+  if (hash == 'favorites') {
+    initFavoritesView();
+    listView.style.display = 'none';
+    detailsView.style.display = 'none';
+    favoritesView.style.display = 'block';
+    refreshFavorites();
+  } else if (hash) {
     initDetailsView();
     listView.style.display = 'none';
+    favoritesView.style.display = 'none';
     detailsView.style.display = 'block';
+    refreshFavorites();
   } else {
     detailsView.style.display = 'none';
+    favoritesView.style.display = 'none';
     listView.style.display = 'block';
+    refreshFavorites();
   }
 }
 
