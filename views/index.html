@@ -2,8 +2,8 @@
 <html class="no-js" lang="">
     <head>
         <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title></title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Movie Search</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -21,28 +21,27 @@
     <body>
         <div class="main-container">
             <div class="main clearfix">
-                <section class="floatyHeader" id="floatyHeaderDetails">
+                <div class="floatyHeader" id="floatyHeaderDetails">
                     <h2>Movie Search</h2>
                     <a href="#favorites" class="favoritesLink">Favorites</a>
                     <form class="form-search" action="#"> 
                         <input id="searchInput" type="text" class="input-medium search-query" onkeyup="searchInputOnchange()">
-                        <!-- <button type="submit" class="btn">Search</button> -->
                     </form>
-                </section>
-                <article id="detailsView">
-                    <section id="detailsBody" class="wrapper">
-                    </section>
-                </article>
-                <article id="listView">
-                    <section id="listBody" class="wrapper">
+                </div>
+                <div id="detailsView">
+                    <div id="detailsBody" class="wrapper">
+                    </div>
+                </div>
+                <div id="listView">
+                    <div id="listBody" class="wrapper">
                         <ul id="list">
                         </ul>
-                    </section>
-                </article>
-                <article id="favoritesView">
-                    <section id="favoritesBody" class="wrapper">
-                    </section>
-                </article>
+                    </div>
+                </div>
+                <div id="favoritesView">
+                    <div id="favoritesBody" class="wrapper">
+                    </div>
+                </div>
             </div> <!-- #main -->
         </div> <!-- #main-container -->
         <script src="js/main.js"></script>
