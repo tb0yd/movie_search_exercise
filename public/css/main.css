@@ -164,7 +164,7 @@ a.favorite.active {
     text-decoration: none;
 }
 
-a.favoritesLink {
+a.favorites-link {
     margin-bottom: 8px;
 }
 
@@ -173,11 +173,11 @@ section > ul {
     margin: 0;
 }
 
-#listView, #detailsView, #favoritesView {
+#list-view, #details-view, #favorites-view {
     display: none;
 }
 
-.floatyHeader {
+.floaty-header {
     position: fixed;
     top: 0;
     border-bottom: 1px solid #ddd;
@@ -186,7 +186,7 @@ section > ul {
     width: 100%;
 }
 
-#listBody, #detailsBody, #favoritesView {
+#list-body, #details-body, #favorites-body {
     margin-top: 110px;
 }
 

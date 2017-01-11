@@ -1,8 +1,14 @@
+'use strict'
+
+var detailsBody = document.getElementById('details-body');
+var listBody = document.getElementById('list-body');
+var favoritesBody = document.getElementById('favorites-body');
+var detailsView = document.getElementById('details-view');
+var listView = document.getElementById('list-view');
+var favoritesView = document.getElementById('favorites-view');
+var floatyHeaderDeatils = document.getElementById('floaty-header-details');
+
 // https://davidwalsh.name/javascript-debounce-function
-// Returns a function, that, as long as it continues to be invoked, will not
-// be triggered. The function will be called after it stops being called for
-// N milliseconds. If `immediate` is passed, trigger the function on the
-// leading edge, instead of the trailing.
 function debounce(func, wait, immediate) {
   var timeout;
   return function() {
@@ -19,7 +25,7 @@ function debounce(func, wait, immediate) {
 };
 
 function searchInputUpdate() {
-  var val = document.getElementById('searchInput').value.replace(/\s+$/,'');
+  var val = document.getElementById('search-input').value.replace(/\s+$/,'');
 
   var xhr = new XMLHttpRequest();
   xhr.open('GET', encodeURI('http://www.omdbapi.com/?type=movie&s=' + val));
@@ -240,7 +246,7 @@ function clickFavoriteIcon(e) {
   refreshFavoriteIcons();
 }
 
-function searchInputOnchange() {
+function searchInputOnkeyup() {
   debounce(searchInputUpdate, 250)();
 }
 
