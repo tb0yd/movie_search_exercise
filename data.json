@@ -1,10 +1,14 @@
 [
   {
-    "name": "Star Wars: Episode V - The Empire Strikes Back",
-    "oid": "tt0080684"
-  },
-  {
     "name": "Star Wars: Episode I - The Phantom Menace",
     "oid": "tt0120915"
+  },
+  {
+    "name": "Star Wars: Episode IV - A New Hope",
+    "oid": "tt0076759"
+  },
+  {
+    "name": "Star Wars: The Clone Wars",
+    "oid": "tt1185834"
   }
 ]

@@ -67,16 +67,17 @@ function searchInputUpdate() {
 
           var item = resp.Search[idx];
           newHtml +=  '<a href="#'+item.imdbID+'"><li> \
-                        <h4>'+item.Title+'</h4>'
+                        <h4>'+item.Title+'</h4> \
+                        <a data-id=\''+item.imdbID+'\' \
+                           data-name=\''+item.Title.replace("'","\'")+'\' \
+                           onclick=\'clickFavoriteIcon(this)\' \
+                           class=\'favorite icon-heart\'></a>';
+
           if (item.Poster !== 'N/A') {
             newHtml +=  '<img src="'+item.Poster+'">';
           }
+
           newHtml +=    '</li></a>';
-          newHtml +=    '<a data-id=\''+item.imdbID+'\' \
-                            data-name=\''+item.Title.replace("'","\'")+'\' \
-                            onclick=\'clickFavoriteIcon(this)\' \
-                            class=\'favorite icon-heart\'></a> \
-                         <hr />';
         }
         list.innerHTML = newHtml;
 
@@ -160,11 +161,11 @@ function initFavoritesView() {
     favoritesBody.innerHTML += '<h4>Favorites</h4>';
     favoritesBody.innerHTML += '<ul>';
     for(var key in favorites) {
-      favoritesBody.innerHTML += '<li>'+favorites[key]+' \
+      favoritesBody.innerHTML += '<li> \
                                     <a data-id=\''+key+'\' \
                                     data-name=\''+favorites[key].replace("'","\'")+'\' \
                                     onclick=\'clickFavoriteIcon(this)\' \
-                                    class=\'favorite icon-heart\'></a> \
+                                    class=\'favorite icon-heart\'></a>'+favorites[key]+' \
                                   </li>';
     }
     favoritesBody.innerHTML += '</ul>';
